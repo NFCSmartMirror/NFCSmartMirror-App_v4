@@ -106,6 +106,7 @@ public class SMSListener extends BroadcastReceiver {
                         this.staticResourceUploader = new StaticResourceUploader(mirrors.get("DUMMY"), "Messages", "ASP1");
                         new UploadResourceTask(this.staticResourceUploader, context, R.raw.sms, "sms.png", appViewID, false,true).execute();
                         new UploadBytesTask(this.staticResourceUploader, htmlString.getBytes(), "test1.txt",appViewID).execute();
+                        new HttpPostRequest().execute("http://192.168.1.171:2534/api");
                     } catch (MalformedURLException e) {
                         this.staticResourceUploader = null;
                         e.printStackTrace();
