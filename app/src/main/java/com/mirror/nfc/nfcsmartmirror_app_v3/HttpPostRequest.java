@@ -40,7 +40,7 @@ public class HttpPostRequest extends AsyncTask<String, String, Void> {
 // URL url = new URL("http://192.168.1.178:2534/api/rpc");
 // URL url = new URL(AppCompatPreferenceActivity.mirrorIPRU + "/rpc");
 
-            URL url = new URL("http://192.168.1.171:2534/api" + "/rpc");
+            URL url = new URL("http://192.168.1.178:2534/api" + "/rpc");
 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoInput(true);
@@ -48,7 +48,7 @@ public class HttpPostRequest extends AsyncTask<String, String, Void> {
             urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.setRequestMethod("POST");
 // UserID, AppID, AppViewID
-            String requestRPC = "{\"jsonrpc\": \"2.0\", \"method\": \"getOrCreateView\", \"params\": [\"ASP\", \"Messages\", \" " + SMSListener.appViewID + " \"], \"id\": 1}";
+            String requestRPC = "{\"jsonrpc\": \"2.0\", \"method\": \"getOrCreateView\", \"params\": [\"ASP\", \"Messages\", \"" + SMSListener.appViewID + "\"], \"id\": 1}";
             OutputStream outputStreamSend = urlConnection.getOutputStream();
             outputStreamSend.write(requestRPC.getBytes("UTF-8"));
             outputStreamSend.flush();
@@ -66,12 +66,18 @@ public class HttpPostRequest extends AsyncTask<String, String, Void> {
         try {
             resultToDisplay = IOUtils.toString(in, "UTF-8");
             resultToDisplay = resultToDisplay.replace("false", "true");
+            resultToDisplay = resultToDisplay.replace("{\"jsonrpc\":\"2.0\",\"result\":", "");
+            resultToDisplay = resultToDisplay.replace(",\"id\":\"1\"}", "");
             Log.i("HTTP_Error",resultToDisplay);
-            String updateRequestRPC = "{\"jsonrpc\": \"2.0\", \"method\": \"updateView\", \"params\": " + resultToDisplay + ", \"id\": 1}";
+            String updateRequestRPC = "{\"jsonrpc\": \"2.0\", \"method\": \"updateView\", \"params\": ["+resultToDisplay + "], \"id\": 1}";
 
-            URL url = new URL("http://192.168.1.171:2534/api" + "/rpc");
+            URL url = new URL("http://192.168.1.178:2534/api" + "/rpc");
 // URL url = new URL(AppCompatPreferenceActivity.mirrorIPRU + "/rpc");
             HttpURLConnection urlConnectionResend = (HttpURLConnection) url.openConnection();
+            urlConnectionResend.setDoInput(true);
+            urlConnectionResend.setDoOutput(true);
+            urlConnectionResend.setRequestProperty("Content-Type", "application/json");
+            urlConnectionResend.setRequestMethod("POST");
             OutputStream outputStreamSend = urlConnectionResend.getOutputStream();
 
             outputStreamSend.write(updateRequestRPC.getBytes("UTF-8"));

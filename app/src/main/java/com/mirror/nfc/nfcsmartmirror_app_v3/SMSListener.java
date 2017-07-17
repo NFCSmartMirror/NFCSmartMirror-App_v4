@@ -64,6 +64,10 @@ public class SMSListener extends BroadcastReceiver {
                             "\"http://www.w3.org/TR/html4/loose.dtd\">\n" +
                             "\n" +
                             "<html>\n" +
+                           "<body bgcolor=\"#000000\">\n"+
+                           "<font color=\"#FFFFFF\">\n"+
+                           "<font size=\"20\">\n"+
+                           "<font face=\"verdana\">\n"+
                             "\n" +
                             "<head>\n" +
                             "\t<meta charset=\"utf-8\">\n" +
@@ -94,7 +98,7 @@ public class SMSListener extends BroadcastReceiver {
                             "</html>\n";
 
                     Log.i("HTML", htmlString);
-                    this.mirrors.put("DUMMY", "http://192.168.1.171:2534/api");
+                    this.mirrors.put("DUMMY", "http://192.168.1.178:2534/api");
                     //this.mirrors.put("DUMMY", AppCompatPreferenceActivity.mirrorIPRU);
                     //Log.i("NSD_STRING_Transmission",AppCompatPreferenceActivity.mirrorIPRU);
                     //this.mirrors.put("DUMMY", "http://10.0.2.2:2534/api");
@@ -103,12 +107,26 @@ public class SMSListener extends BroadcastReceiver {
                     Log.i("ASP", "hallo wird ausgeführt");
                     try {
                         //neue Instanz des StaticResourceUploaders ausführen
-                        this.staticResourceUploader = new StaticResourceUploader(mirrors.get("DUMMY"), "Messages", "ASP1");
-                        new UploadResourceTask(this.staticResourceUploader, context, R.raw.sms, "sms.png", appViewID, false,true).execute();
-                        new UploadBytesTask(this.staticResourceUploader, htmlString.getBytes(), "test1.txt",appViewID).execute();
-                        new HttpPostRequest().execute("http://192.168.1.171:2534/api");
+                        this.staticResourceUploader = new StaticResourceUploader(mirrors.get("DUMMY"), "Messages", "ASP");
+                        UploadResourceTask iconUploadTask = new UploadResourceTask(this.staticResourceUploader, SettingsActivity.thisActivity, R.raw.sms, "sms.png", appViewID, false,true);
+                        UploadBytesTask mainPageUploadTask = new UploadBytesTask(this.staticResourceUploader, SettingsActivity.thisActivity, htmlString.getBytes(), "test1.html",appViewID);
+                        HttpPostRequest publisherTask = new HttpPostRequest();
+                        mainPageUploadTask.setNextTask(publisherTask, "http://192.168.1.178:2534/api");
+                        iconUploadTask.setNextTask(mainPageUploadTask, null);
+                        iconUploadTask.execute();
+                        Log.i("Error_Upload1", "Error_Upload1111");
+                        //while(!AsyncTask.Status.FINISHED.equals(iconUploadTask.getStatus())) {
+                          //  AsyncTask.Status blub = iconUploadTask.getStatus();
+                            // wait
+                        //}
+                        //mainPageUploadTask.execute();
+                        //while(!AsyncTask.Status.FINISHED.equals(mainPageUploadTask.getStatus())) {
+                            // wait
+                        //}
+                        //publisherTask.execute("http://192.168.1.171:2534/api");
                     } catch (MalformedURLException e) {
                         this.staticResourceUploader = null;
+                        Log.i("Error_Upload2", "Error_Upload222 innerhalb catch");
                         e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();

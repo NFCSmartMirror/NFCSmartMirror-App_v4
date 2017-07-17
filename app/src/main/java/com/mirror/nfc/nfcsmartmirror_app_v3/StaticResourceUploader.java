@@ -175,24 +175,30 @@ public class StaticResourceUploader {
         if (connectionFactory == null) {
             throw new IllegalArgumentException("'connectionFactory' mustn't be null!");
         }
+        final String response;
         int read = 0;
         final byte[] bytes = new byte[1024];
 
+        Log.d("SRU", "open connection");
         final HttpURLConnection connection = connectionFactory.create();
         try (final InputStream inputStream = inputStreamSupplier.get()) {
             try (final OutputStream os = connection.getOutputStream()) {
+                Log.d("SRU", "send bytes");
                 while ((read = inputStream.read(bytes)) != -1) {
                     os.write(bytes, 0, read);
                 }
             }
+            Log.d("SRU", "get response");
             try (final InputStream responseStream = connection.getInputStream()) {
                 final BufferedReader in = new BufferedReader(new InputStreamReader(responseStream));
-                return in.readLine();
+                response = in.readLine();
             }
         }
         finally {
+            Log.d("SRU", "finish connection");
             connection.disconnect();
         }
+        return response;
     }
 
     /**
@@ -293,6 +299,7 @@ public class StaticResourceUploader {
         try {
             return upload(inputStreamSupplier, this.builder.build());
         } catch (Throwable throwable) {
+            Log.e("WTF!", "Unexpected error appeared!", throwable);
             throwable.printStackTrace();
             return null;
         }
