@@ -94,9 +94,9 @@ public class SMSListener extends BroadcastReceiver {
                             "</html>\n";
 
                     Log.i("HTML", htmlString);
-//                    this.mirrors.put("DUMMY", "http://192.168.178.26:2534/api");
-                    this.mirrors.put("DUMMY", AppCompatPreferenceActivity.mirrorIPRU);
-                    Log.i("NSD_STRING_Transmission",AppCompatPreferenceActivity.mirrorIPRU);
+                    this.mirrors.put("DUMMY", "http://192.168.1.171:2534/api");
+                    //this.mirrors.put("DUMMY", AppCompatPreferenceActivity.mirrorIPRU);
+                    //Log.i("NSD_STRING_Transmission",AppCompatPreferenceActivity.mirrorIPRU);
                     //this.mirrors.put("DUMMY", "http://10.0.2.2:2534/api");
 
                     //Kontrolle, ob Methode ausgeführt wird
