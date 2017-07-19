@@ -1,7 +1,9 @@
 package com.mirror.nfc.nfcsmartmirror_app_v3;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
@@ -10,6 +12,8 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
@@ -23,6 +27,8 @@ import android.widget.Toast;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 
+import static com.mirror.nfc.nfcsmartmirror_app_v3.SettingsActivity.thisActivity;
+
 /**
  * Defining layout of the Mirror Connect App...
  * A {@link android.preference.PreferenceActivity} which implements and proxies the necessary calls
@@ -30,6 +36,7 @@ import java.net.InetAddress;
  */
 public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
 
+    private static int MY_PERMISSIONS_REQUEST_READ_CONTACTS;
     private AppCompatDelegate mDelegate;
     //NFC
     private TextView mTextView;
@@ -37,9 +44,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
 
     public static final String SERVICE_TYPE = "_mirror._tcp.";
     public static final String TAG = "NSD_Service";
-    public String SmartMirrorSR = "Smart Mirror";
-    public String SmartMirrorHD = "SmartMirrorHD";
-    public static String mirrorIPRU;
+    public static String mirrorIPRU = "http://192.168.1.178:2534/api";
     private NsdManager mNsdManager;
 
     //Here starts a part of the NetworkServiceDiscovery
@@ -114,6 +119,10 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         //NetworkServiceDiscovery nsd = new NetworkServiceDiscovery(this);
         //Next line please below the IFs
 //        handleIntent (getIntent());
+
+        // Here, thisActivity is the current activity
+
+
         handleIntent (getIntent());
 
         if(mNfcAdapter == null){
@@ -131,9 +140,8 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
 
     //NFC Tag handling
     private void handleIntent(Intent intent){
-        //Method for connecting the mirror
-        //Toast.makeText(this ,"THIS IS WHERE THE MAGIC HAPPENS",Toast.LENGTH_SHORT).show();
 
+        //Call of the discovery function, will always be executed if a message comes in
         this.mNsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
         initializeDiscoveryListener();
         mNsdManager.discoverServices(
@@ -166,14 +174,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
                 String mirrorPort = String.valueOf(serviceInfo.getPort());
                 String mirrorIP = host.getHostAddress();
 
-                Log.i("NSD_Test_Port", mirrorIP);
                 Log.i("NSD_Test", String.valueOf(serviceInfo));
-                Log.i("NSD_InetName",serviceInfo.getServiceName());
-                //String port = new String(mService.getAttributes().get("port"));
-                Log.i("schreib",host.getAddress().toString());
-                Log.i("Attributes", String.valueOf(serviceInfo.getAttributes().size()));
-                //Log.i("Port", port);
-
                 if (host == null){
                     Log.i("Host", "Host is null");
                     return;
@@ -182,7 +183,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
                 if (host instanceof Inet4Address){
                     String inetAdressv4Mirror = "http://" +mirrorIP+":"+mirrorPort +"/api";
                     Log.i("NSD_IP4",inetAdressv4Mirror);
-                    mirrorIPRU = inetAdressv4Mirror;
+//                    mirrorIPRU = inetAdressv4Mirror;
                     Toast.makeText(getApplicationContext(),"IPv4! Mirror successfully saved!", Toast.LENGTH_SHORT).show();
                 }else{
                     //Creation of ipv6 address of mirror
@@ -197,7 +198,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
     }
 
 
-
+    //The following code was created by our app template, does not add functionality for the smart mirror
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
