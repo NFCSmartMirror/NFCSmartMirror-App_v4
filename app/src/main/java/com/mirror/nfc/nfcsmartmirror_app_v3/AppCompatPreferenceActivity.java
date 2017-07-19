@@ -278,4 +278,31 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         }
         return mDelegate;
     }
+
+//    Permissions
+    @Override
+    public void onStart(){
+        super.onStart();
+        // Here, thisActivity is the current activity
+        // ask for CONTACTS permission
+        if (ContextCompat.checkSelfPermission(thisActivity,
+                Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(thisActivity,
+                        Manifest.permission.READ_SMS)
+                        != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(thisActivity,
+                        Manifest.permission.READ_PHONE_STATE)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+
+            ActivityCompat.requestPermissions(thisActivity,
+                    new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_SMS},
+                    MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+
+        }
+
+    }
+
+
 }

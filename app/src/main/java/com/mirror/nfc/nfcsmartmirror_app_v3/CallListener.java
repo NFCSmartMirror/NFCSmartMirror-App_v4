@@ -66,7 +66,7 @@ public class CallListener extends BroadcastReceiver {
                             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH.mm.ss");
                             String time = sdf.format(dat);
 
-                            String message = "Missed call at: " + time;
+                            String message = " Called you at: " + time;
                             Log.i("Call_Error_Time", time);
                             String phoneNumber = incomingNumber;
 
@@ -104,8 +104,9 @@ public class CallListener extends BroadcastReceiver {
                                     " <div id=\"content\" class=\"centered-text\">\n" +
                                     "\t\t<div class=\"quote\">\n" +
                                     "\t\t\t<blockquote class=\"quote-size\">\n" +
-                                    "\t\t\t\t<p>" + message + "</p>" +
-                                    "\t\t\t\t<footer><cite title=\"Source Title\">" + SMSListener.getContactName(context,phoneNumber) + "</cite></footer>\n" +
+                                    "\t\t\t\t<p>" +SMSListener.getContactName(context, incomingNumber) + message + "</p>" +
+//                                    "\t\t\t\t<footer><cite title=\"Source Title\">" + SMSListener.getContactName(context,phoneNumber) + "</cite></footer>\n" +
+//                                    "\t\t\t\t<footer><cite title=\"Source Title\">" + SMSListener.getContactName(context,incomingNumber) + "</cite></footer>\n" +
                                     "\t\t\t</blockquote>\n" +
                                     "\t\t</div>\n" +
                                     "\t</div>\n" +
