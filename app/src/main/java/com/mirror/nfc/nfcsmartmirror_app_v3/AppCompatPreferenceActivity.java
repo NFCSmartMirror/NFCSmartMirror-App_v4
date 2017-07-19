@@ -279,7 +279,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         return mDelegate;
     }
 
-//    Permissions
+//    Permissions given
     @Override
     public void onStart(){
         super.onStart();
