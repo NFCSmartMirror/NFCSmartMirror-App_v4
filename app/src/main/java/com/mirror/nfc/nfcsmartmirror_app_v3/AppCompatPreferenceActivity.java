@@ -44,8 +44,9 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
 
     public static final String SERVICE_TYPE = "_mirror._tcp.";
     public static final String TAG = "NSD_Service";
-    public static String mirrorIPRU = "http://192.168.1.178:2534/api";
+    public static String mirrorIPRU = "http://192.168.178.109:2534/api";
     private NsdManager mNsdManager;
+    public static boolean connectionEstablished = false;
 
     //Here starts a part of the NetworkServiceDiscovery
 
@@ -53,7 +54,6 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
     NsdManager.RegistrationListener mRegistrationListener;
 
     //public static final String SERVICE_TYPE = "_http._tcp.";
-
 
 
     public void initializeDiscoveryListener() {
@@ -123,35 +123,40 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         // Here, thisActivity is the current activity
 
 
-        handleIntent (getIntent());
+//        handleIntent(getIntent());
 
-        if(mNfcAdapter == null){
+        if (mNfcAdapter == null) {
             Toast.makeText(this, " this device doesnt support NFC", Toast.LENGTH_SHORT).show();
-//            finish();
+            finish();
             return;
         }
-        if(!mNfcAdapter.isEnabled()){
-            mTextView.setText ("NFC is disabled");
+        if (!mNfcAdapter.isEnabled()) {
+            mTextView.setText("NFC is disabled");
         }
-//        handleIntent (getIntent());
+        handleIntent (getIntent());
 
     }
 
 
     //NFC Tag handling
-    private void handleIntent(Intent intent){
+    private void handleIntent(Intent intent) {
 
         //Call of the discovery function, will always be executed if a message comes in
         this.mNsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
-        initializeDiscoveryListener();
-        mNsdManager.discoverServices(
-                SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
-        Log.i("NFC_handling", "Next try");
-        String action = intent.getAction();
-        if(NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)){
-            String type = intent.getType();
-            Toast.makeText(this,"jetzt startet der bums ",Toast.LENGTH_SHORT).show();
+        if ( connectionEstablished == false) {
+            initializeDiscoveryListener();
+            mNsdManager.discoverServices(
+                    SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
 
+            Log.i("NFC_handling", "Next try");
+            String action = intent.getAction();
+            if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
+                String type = intent.getType();
+                Toast.makeText(this, "jetzt startet der bums ", Toast.LENGTH_SHORT).show();
+
+            }
+        }else{
+            finish();
         }
     }
 
@@ -175,24 +180,25 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
                 String mirrorIP = host.getHostAddress();
 
                 Log.i("NSD_Test", String.valueOf(serviceInfo));
-                if (host == null){
+                if (host == null) {
                     Log.i("Host", "Host is null");
                     return;
                 }
                 //Creation of ipv6 address of mirror
-                if (host instanceof Inet4Address){
-                    String inetAdressv4Mirror = "http://" +mirrorIP+":"+mirrorPort +"/api";
-                    Log.i("NSD_IP4",inetAdressv4Mirror);
+                if (host instanceof Inet4Address) {
+                    String inetAdressv4Mirror = "http://" + mirrorIP + ":" + mirrorPort + "/api";
+                    Log.i("NSD_IP4", inetAdressv4Mirror);
+                    connectionEstablished = true;
 //                    mirrorIPRU = inetAdressv4Mirror;
-                    Toast.makeText(getApplicationContext(),"IPv4! Mirror successfully saved!", Toast.LENGTH_SHORT).show();
-                }else{
+                    Toast.makeText(getApplicationContext(), "IPv4! Mirror successfully saved!", Toast.LENGTH_SHORT).show();
+                } else {
                     //Creation of ipv6 address of mirror
                     //this.onServiceResolved(serviceInfo);
-                    String inetAdressv6Mirror = "http://["+mirrorIP +"]:"+mirrorPort +"/api";
+                    String inetAdressv6Mirror = "http://[" + mirrorIP + "]:" + mirrorPort + "/api";
                     Log.i("NSD_IP6", inetAdressv6Mirror);
-                    Toast.makeText(getApplicationContext(),"IPv6! Please use tag again!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "IPv6! Please use tag again!", Toast.LENGTH_SHORT).show();
                 }
-                Log.i("Host", host.getHostAddress());
+                Log.i("NSD_Host", host.getHostAddress());
             }
         };
     }
@@ -279,9 +285,9 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         return mDelegate;
     }
 
-//    Permissions given
+    //    Permissions given
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         // Here, thisActivity is the current activity
         // ask for CONTACTS permission

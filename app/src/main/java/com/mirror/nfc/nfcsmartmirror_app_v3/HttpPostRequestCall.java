@@ -69,8 +69,8 @@ public class HttpPostRequestCall extends AsyncTask<String, String, Void> {
             resultToDisplay = resultToDisplay.replace("false", "true");
             resultToDisplay = resultToDisplay.replace("{\"jsonrpc\":\"2.0\",\"result\":", "");
             resultToDisplay = resultToDisplay.replace(",\"id\":\"1\"}", "");
-            Log.i("HTTP_Error",resultToDisplay);
-            String updateRequestRPCCall = "{\"jsonrpc\": \"2.0\", \"method\": \"updateView\", \"params\": ["+resultToDisplay + "], \"id\": 1}";
+            Log.i("HTTP_Error", resultToDisplay);
+            String updateRequestRPCCall = "{\"jsonrpc\": \"2.0\", \"method\": \"updateView\", \"params\": [" + resultToDisplay + "], \"id\": 1}";
 
             URL url = new URL(AppCompatPreferenceActivity.mirrorIPRU + "/rpc");
 // URL url = new URL(AppCompatPreferenceActivity.mirrorIPRU + "/rpc");
@@ -93,7 +93,6 @@ public class HttpPostRequestCall extends AsyncTask<String, String, Void> {
         }
         return null;
     }
-
 
 
     @Override
