@@ -30,7 +30,7 @@ import java.net.InetAddress;
 import static com.mirror.nfc.nfcsmartmirror_app_v3.SettingsActivity.thisActivity;
 
 /**
- * Defining layout of the Mirror Connect App...
+ * Defining layout of the Mirror Connect App
  * A {@link android.preference.PreferenceActivity} which implements and proxies the necessary calls
  * to be used with AppCompat.
  */
@@ -44,7 +44,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
 
     public static final String SERVICE_TYPE = "_mirror._tcp.";
     public static final String TAG = "NSD_Service";
-    public static String mirrorIPRU = "http://192.168.178.109:2534/api";
+    public static String mirrorIPRU = "http://141.23.153.8:2534/api";
     private NsdManager mNsdManager;
     public static boolean connectionEstablished = false;
 
@@ -55,7 +55,12 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
 
     //public static final String SERVICE_TYPE = "_http._tcp.";
 
+//  the discovery listener construct was taken from https://android.googlesource.com/platform/development/+/master/samples/training/NsdChat/src/com/example/android/nsdchat/NsdHelper.java
+//   And modified to fit our app
 
+    /**
+     * Starts the discovery of devices in the network in our case (_mirror._tcp.), if found it is initialized
+     */
     public void initializeDiscoveryListener() {
 
         // Instantiate a new DiscoveryListener
@@ -88,8 +93,8 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
 
             @Override
             public void onServiceFound(NsdServiceInfo service) {
-                // A service was found!  Do something with it.
                 Log.d(TAG, "Service discovery success" + service);
+//                If a service of our type is found (_mirror._tcp.), we hand over our service to the resolveService method.
                 if (service.getServiceType().equals(SERVICE_TYPE)) {
                     // Service type is the string containing the protocol and
                     // transport layer for this service.
@@ -108,6 +113,10 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         };
     }
 
+    /**
+     * This function is started as soon as the app is installed on a device.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getDelegate().installViewFactory();
@@ -116,50 +125,56 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
 
         //Beginning of  NFC Tag handling
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        //NetworkServiceDiscovery nsd = new NetworkServiceDiscovery(this);
-        //Next line please below the IFs
+
+        handleIntent(getIntent());
+
+//        If you are not using a virtual device, comment out the line above and use the lines below
+//        if (mNfcAdapter == null) {
+//            Toast.makeText(this, " this device doesnt support NFC", Toast.LENGTH_SHORT).show();
+//            finish();
+//            return;
+//        }
+//        if (!mNfcAdapter.isEnabled()) {
+//            mTextView.setText("NFC is disabled");
+//        }
 //        handleIntent (getIntent());
-
-        // Here, thisActivity is the current activity
-
-
-//        handleIntent(getIntent());
-
-        if (mNfcAdapter == null) {
-            Toast.makeText(this, " this device doesnt support NFC", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-        if (!mNfcAdapter.isEnabled()) {
-            mTextView.setText("NFC is disabled");
-        }
-        handleIntent (getIntent());
 
     }
 
 
     //NFC Tag handling
+
+    /**
+     *
+     * @param intent
+     */
     private void handleIntent(Intent intent) {
 
         //Call of the discovery function, will always be executed if a message comes in
-        this.mNsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
+        //If a connection is not yet established, the following function will be called, as soon as a NFC-Tag is used
         if ( connectionEstablished == false) {
-            initializeDiscoveryListener();
-            mNsdManager.discoverServices(
-                    SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
 
+            this.mNsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
+            initializeDiscoveryListener();
+            mNsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
             Log.i("NFC_handling", "Next try");
+            
             String action = intent.getAction();
             if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
                 String type = intent.getType();
-                Toast.makeText(this, "jetzt startet der bums ", Toast.LENGTH_SHORT).show();
-
+                Toast.makeText(this, "You used an NFC Tag", Toast.LENGTH_SHORT).show();
+                Log.i("NFC_Use","A NFC Tag was used");
             }
         }else{
+//            The app will be closed if a NFC-Tag is being used and it was already connected to a mirror.
             finish();
         }
     }
 
+    /**
+     * This function is for resolving our service, if a service is found, it can be used, to get the IP and port of the service.
+     * @return resolved NsdManager
+     */
     public NsdManager.ResolveListener initializeResolveListener() {
         return new NsdManager.ResolveListener() {
 
@@ -188,7 +203,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
                 if (host instanceof Inet4Address) {
                     String inetAdressv4Mirror = "http://" + mirrorIP + ":" + mirrorPort + "/api";
                     Log.i("NSD_IP4", inetAdressv4Mirror);
-                    connectionEstablished = true;
+//                    connectionEstablished = true;
 //                    mirrorIPRU = inetAdressv4Mirror;
                     Toast.makeText(getApplicationContext(), "IPv4! Mirror successfully saved!", Toast.LENGTH_SHORT).show();
                 } else {
