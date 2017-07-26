@@ -299,7 +299,6 @@ public class StaticResourceUploader {
         try {
             return upload(inputStreamSupplier, this.builder.build());
         } catch (Throwable throwable) {
-            Log.e("WTF!", "Unexpected error appeared!", throwable);
             throwable.printStackTrace();
             return null;
         }

@@ -47,20 +47,7 @@ public class CallListener extends BroadcastReceiver {
 //                final Bundle bundle = intent.getExtras();
 
                 try {
-
-//                    if (bundle != null) {
-
-                    //longer SMS are split into more than one protocol data units (PDUs)
-                    //therefore store them in an array
-//                        final Object[] pduArray = (Object[]) bundle.get("pdus");
-
-//                        for (int i = 0; i < pduArray.length; i++) {
-
-//                            SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pduArray[i]);
-//                            String phoneNumber = currentMessage.getDisplayOriginatingAddress();
-
                     Date dat = new Date();
-//                            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd.MM.yyyy HH.mm.ss");
                     java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm:ss");
                     String time = sdf.format(dat);
 
@@ -103,8 +90,6 @@ public class CallListener extends BroadcastReceiver {
                             "\t\t<div class=\"quote\">\n" +
                             "\t\t\t<blockquote class=\"quote-size\">\n" +
                             "\t\t\t\t<p>" + SMSListener.getContactName(context, incomingNumber) + message + "</p>" +
-//                                    "\t\t\t\t<footer><cite title=\"Source Title\">" + SMSListener.getContactName(context,phoneNumber) + "</cite></footer>\n" +
-//                                    "\t\t\t\t<footer><cite title=\"Source Title\">" + SMSListener.getContactName(context,incomingNumber) + "</cite></footer>\n" +
                             "\t\t\t</blockquote>\n" +
                             "\t\t</div>\n" +
                             "\t</div>\n" +
@@ -121,21 +106,18 @@ public class CallListener extends BroadcastReceiver {
 
                     Log.i("HTML", htmlString);
                     this.mirrors.put("DUMMY", AppCompatPreferenceActivity.mirrorIPRU);
-                    //this.mirrors.put("DUMMY", "http://10.0.2.2:2534/api");
-
                     //Does the code actually go here
                     Log.i("Call_test", "Call came in");
                     try {
-                        //neue Instanz des StaticResourceUploaders ausführen
+                        //create new instance of StaticResourceUploaders
                         this.staticResourceUploader = new StaticResourceUploader(mirrors.get("DUMMY"), "Call", "ASP");
                         UploadResourceTask iconUploadTask = new UploadResourceTask(this.staticResourceUploader, SettingsActivity.thisActivity, R.raw.call, "call.png", appViewID, false, true);
                         UploadBytesTask mainPageUploadTask = new UploadBytesTask(this.staticResourceUploader, SettingsActivity.thisActivity, htmlString.getBytes(), "call.html", appViewID);
                         HttpPostRequestCall publisherTask = new HttpPostRequestCall();
-//                        mainPageUploadTask.setNextTask(publisherTask, "http://192.168.1.178:2534/api");
                         mainPageUploadTask.setNextTask(publisherTask, AppCompatPreferenceActivity.mirrorIPRU);
                         iconUploadTask.setNextTask(mainPageUploadTask, null);
                         iconUploadTask.execute();
-                        Log.i("Call_Listener", "Call wird ausgeführt");
+                        Log.i("Call_Listener", "Call is executed");
                     } catch (MalformedURLException e) {
                         this.staticResourceUploader = null;
                         e.printStackTrace();
@@ -143,9 +125,6 @@ public class CallListener extends BroadcastReceiver {
                         e.printStackTrace();
                     }
 
-//                        } // end for loop
-//                    }
-                    // bundle is null
 
                 } catch (Exception e) {
                     Log.e("CALL_Error", "Exception CallListener" + e);
@@ -160,9 +139,6 @@ public class CallListener extends BroadcastReceiver {
 
 
     public static String appViewID = "Call";
-
-
-    // Hash
 
 
 }

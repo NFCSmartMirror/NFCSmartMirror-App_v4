@@ -23,7 +23,8 @@ import java.util.Map;
  * The app then shows a toast alert (mainly for testing reasons) and processes the information in an html file.
  */
 public class SMSListener extends BroadcastReceiver {
-    // Look up for the number: From https://stackoverflow.com/questions/3079365/android-retrieve-contact-name-from-phone-number
+//    The following code is for displaying the name of the caller or SMS sender on the mirror, this is just an additional feature.
+//    Look up for the number from https://stackoverflow.com/questions/3079365/android-retrieve-contact-name-from-phone-number
     public static String getContactName(Context context, String phoneNumber) {
         ContentResolver cr = context.getContentResolver();
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
@@ -31,7 +32,6 @@ public class SMSListener extends BroadcastReceiver {
         if (cursor == null) {
             return null;
         }
-//        String contactName = null;
         String contactName = phoneNumber;
         if(cursor.moveToFirst()) {
             contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
@@ -122,17 +122,13 @@ public class SMSListener extends BroadcastReceiver {
 
                     Log.i("HTML", htmlString);
                     this.mirrors.put("DUMMY", AppCompatPreferenceActivity.mirrorIPRU);
-                    //this.mirrors.put("DUMMY", "http://10.0.2.2:2534/api");
 
-                    //Does the code actually go here
-                    Log.i("SMS", "hallo wird ausgeführt");
                     try {
-                        //neue Instanz des StaticResourceUploaders ausführen
+                        //create new instance of the staticResourceUploader to upload our picture and html to the mirrorManagerApp
                         this.staticResourceUploader = new StaticResourceUploader(mirrors.get("DUMMY"), "Messages", "ASP");
                         UploadResourceTask iconUploadTask = new UploadResourceTask(this.staticResourceUploader, SettingsActivity.thisActivity, R.raw.sms, "sms.png", appViewID, false,true);
                         UploadBytesTask mainPageUploadTask = new UploadBytesTask(this.staticResourceUploader, SettingsActivity.thisActivity, htmlString.getBytes(), "test1.html",appViewID);
                         HttpPostRequest publisherTask = new HttpPostRequest();
-//                        mainPageUploadTask.setNextTask(publisherTask, "http://192.168.1.178:2534/api");
                         mainPageUploadTask.setNextTask(publisherTask,AppCompatPreferenceActivity.mirrorIPRU);
                         iconUploadTask.setNextTask(mainPageUploadTask, null);
                         iconUploadTask.execute();
@@ -151,7 +147,6 @@ public class SMSListener extends BroadcastReceiver {
         }
     }
 
-    // Hash
     private final Map<String, String> mirrors = new HashMap<>();
     private StaticResourceUploader staticResourceUploader;
     final String appID = null;

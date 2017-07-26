@@ -44,7 +44,8 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
 
     public static final String SERVICE_TYPE = "_mirror._tcp.";
     public static final String TAG = "NSD_Service";
-    public static String mirrorIPRU = "http://141.23.153.8:2534/api";
+//    Please enter here your mirrors IP if you are not using the showrooms mirror and are using a virtual device
+    public static String mirrorIPRU = "http://192.168.1.91:2534/api";
     private NsdManager mNsdManager;
     public static boolean connectionEstablished = false;
 
@@ -199,16 +200,19 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
                     Log.i("Host", "Host is null");
                     return;
                 }
-                //Creation of ipv6 address of mirror
+                //Creation of ipv4 address of mirror
                 if (host instanceof Inet4Address) {
                     String inetAdressv4Mirror = "http://" + mirrorIP + ":" + mirrorPort + "/api";
                     Log.i("NSD_IP4", inetAdressv4Mirror);
-//                    connectionEstablished = true;
-//                    mirrorIPRU = inetAdressv4Mirror;
+//                    If you use a virtual device, it will never overwrite the mirrorIPRU, because you cannot connect
+//                    a virtual device to the the wireless network. Because of that it can never find a service in the network.
+//                    This is the reason why the serviceadress is hard coded in the top part.
+                    connectionEstablished = true;
+                    mirrorIPRU = inetAdressv4Mirror;
                     Toast.makeText(getApplicationContext(), "IPv4! Mirror successfully saved!", Toast.LENGTH_SHORT).show();
                 } else {
                     //Creation of ipv6 address of mirror
-                    //this.onServiceResolved(serviceInfo);
+//                    IP v6 are not possible to being used right now in this app.
                     String inetAdressv6Mirror = "http://[" + mirrorIP + "]:" + mirrorPort + "/api";
                     Log.i("NSD_IP6", inetAdressv6Mirror);
                     Toast.makeText(getApplicationContext(), "IPv6! Please use tag again!", Toast.LENGTH_SHORT).show();

@@ -14,11 +14,11 @@ import java.net.URL;
 
 /**
  * Example from https://stackoverflow.com/questions/2938502/sending-post-data-in-android
+ * This class is the same like HttpPostRequest, just for the calling
  */
 
 public class HttpPostRequestCall extends AsyncTask<String, String, Void> {
     public HttpPostRequestCall() {
-//set context variables if required
     }
 
     @Override
@@ -36,10 +36,6 @@ public class HttpPostRequestCall extends AsyncTask<String, String, Void> {
 
         InputStream in = null;
         try {
-
-// URL url = new URL(urlString);
-// URL url = new URL("http://192.168.1.178:2534/api/rpc");
-// URL url = new URL(AppCompatPreferenceActivity.mirrorIPRU + "/rpc");
 
             URL url = new URL(AppCompatPreferenceActivity.mirrorIPRU + "/rpc");
 
@@ -65,6 +61,9 @@ public class HttpPostRequestCall extends AsyncTask<String, String, Void> {
         }
 
         try {
+//            Manipulation of JSON String.
+//            Workaround for not using JSON!
+//            Setting the public variable of our app on true
             resultToDisplay = IOUtils.toString(in, "UTF-8");
             resultToDisplay = resultToDisplay.replace("false", "true");
             resultToDisplay = resultToDisplay.replace("{\"jsonrpc\":\"2.0\",\"result\":", "");
@@ -73,7 +72,6 @@ public class HttpPostRequestCall extends AsyncTask<String, String, Void> {
             String updateRequestRPCCall = "{\"jsonrpc\": \"2.0\", \"method\": \"updateView\", \"params\": [" + resultToDisplay + "], \"id\": 1}";
 
             URL url = new URL(AppCompatPreferenceActivity.mirrorIPRU + "/rpc");
-// URL url = new URL(AppCompatPreferenceActivity.mirrorIPRU + "/rpc");
             HttpURLConnection urlConnectionResendCall = (HttpURLConnection) url.openConnection();
             urlConnectionResendCall.setDoInput(true);
             urlConnectionResendCall.setDoOutput(true);
@@ -87,7 +85,6 @@ public class HttpPostRequestCall extends AsyncTask<String, String, Void> {
             urlConnectionResendCall.getInputStream().close();
 
 
-//to [convert][1] byte stream to a string
         } catch (IOException e) {
             e.printStackTrace();
         }

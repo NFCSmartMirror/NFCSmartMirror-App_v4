@@ -1,9 +1,4 @@
 package com.mirror.nfc.nfcsmartmirror_app_v3;
-
-/**
- * Created by Julian on 13.07.2017.
- */
-
 /* Copyright (C) 2017 IOLITE GmbH, All rights reserved.
  * Created:    10.01.2017
  * Created by: lehmann

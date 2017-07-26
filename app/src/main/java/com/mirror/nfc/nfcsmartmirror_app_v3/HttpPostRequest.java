@@ -36,9 +36,6 @@ public class HttpPostRequest extends AsyncTask<String, String, Void> {
         InputStream in = null;
         try {
 
-// URL url = new URL(urlString);
-// URL url = new URL("http://192.168.1.178:2534/api/rpc");
-// URL url = new URL(AppCompatPreferenceActivity.mirrorIPRU + "/rpc");
 
             URL url = new URL(AppCompatPreferenceActivity.mirrorIPRU + "/rpc");
 
@@ -47,7 +44,7 @@ public class HttpPostRequest extends AsyncTask<String, String, Void> {
             urlConnection.setDoOutput(true);
             urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.setRequestMethod("POST");
-// UserID, AppID, AppViewID
+//          UserID, AppID, AppViewID
             String requestRPC = "{\"jsonrpc\": \"2.0\", \"method\": \"getOrCreateView\", \"params\": [\"ASP\", \"Messages\", \"" + SMSListener.appViewID + "\"], \"id\": 1}";
             OutputStream outputStreamSend = urlConnection.getOutputStream();
             outputStreamSend.write(requestRPC.getBytes("UTF-8"));
@@ -64,6 +61,9 @@ public class HttpPostRequest extends AsyncTask<String, String, Void> {
         }
 
         try {
+//            Manipulation of JSON String.
+//            Workaround for not using JSON!
+//            Setting the public variable of our app on true
             resultToDisplay = IOUtils.toString(in, "UTF-8");
             resultToDisplay = resultToDisplay.replace("false", "true");
             resultToDisplay = resultToDisplay.replace("{\"jsonrpc\":\"2.0\",\"result\":", "");
@@ -86,7 +86,6 @@ public class HttpPostRequest extends AsyncTask<String, String, Void> {
             urlConnectionResend.getInputStream().close();
 
 
-//to [convert][1] byte stream to a string
         } catch (IOException e) {
             e.printStackTrace();
         }

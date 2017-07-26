@@ -7,9 +7,6 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * Created by Julian on 15.07.2017.
- */
 
 public class UploadResourceTask extends AsyncTask<String, Void, String> {
     private final StaticResourceUploader resourceUploader;
@@ -47,19 +44,19 @@ public class UploadResourceTask extends AsyncTask<String, Void, String> {
         };
 
     }
-
+//  URT means UploadResource Taks, debug info
     @Override
     protected String doInBackground(String... params){
-        Log.i("WTF?", "Verarschen?");
+        Log.i("URT_Test", "null");
         String result = null;
         try {
             result = this.resourceUploader.uploadResource(this.supplier, this.urlBasePath, config);
-            Log.i("WTF?", "Minion");
+            Log.i("URT_Test", "Upload");
         } catch (IOException e) {
-            Log.i("WTF?", "Banane");
+            Log.i("URT_Error", "Exception");
             e.printStackTrace();
         }
-        Log.i("TASK", "Upload resource to "+urlBasePath+" finished");
+        Log.i("URT", "Upload resource to "+urlBasePath+" finished");
         if(nextTask != null) {
             context.runOnUiThread(new Runnable() {
                 @Override

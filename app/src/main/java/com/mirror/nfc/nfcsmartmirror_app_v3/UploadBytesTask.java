@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import java.io.IOException;
 
 /**
- * Created by Julian on 15.07.2017.
+ * This is the same like UploadResourceTask, but this one is for the HTML upload
  */
 
 public class UploadBytesTask extends AsyncTask<String, Void, String> {
